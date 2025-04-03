@@ -42,11 +42,15 @@ const Recommendation: React.FC = () => {
         placeholder="Enter UserID"
         value={selectedID}
         onChange={(e) => setSelectedID(e.target.value)}
+        style={{ marginRight: "20px" }}
       />
       <button onClick={fetchRecommendations}>Get Recommendations</button>
 
-      <p>Collaborative Filtering</p>
-      <ul>
+        <br />
+        <br />
+
+      <p><b>Collaborative Filtering</b></p>
+      <ul style={{ textAlign: "left" }}>
         {recommendations.collaborative.length > 0 ? (
           recommendations.collaborative.map((item, index) => (
             <li key={index}>{item}</li>
@@ -55,6 +59,10 @@ const Recommendation: React.FC = () => {
           <p>No recommendations available.</p>
         )}
       </ul>
+
+      <p><b>Content Filtering Goes Here</b></p>
+
+      <p><b>Azure Goes Here</b></p>
     </div>
   );
 };
