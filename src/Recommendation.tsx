@@ -42,19 +42,30 @@ const Recommendation: React.FC = () => {
         placeholder="Enter UserID"
         value={selectedID}
         onChange={(e) => setSelectedID(e.target.value)}
+        style={{ marginRight: "20px" }}
       />
       <button onClick={fetchRecommendations}>Get Recommendations</button>
 
       <p>Collaborative Filtering</p>
       <ul>
-        {recommendations.collaborative.length > 0 ? (
-          recommendations.collaborative.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))
-        ) : (
-          <p>No recommendations available.</p>
-        )}
+        {recommendations.collaborative.map((id, index) => (
+          <li key={index}>{id}</li>
+        ))}
       </ul>
+
+      {/* <p>Content Filtering</p>
+      <ul>
+        {recommendations.content.map((id, index) => (
+          <li key={index}>{id}</li>
+        ))}
+      </ul>
+
+      <p>Azure ML</p>
+      <ul>
+        {recommendations.azure.map((id, index) => (
+          <li key={index}>{id}</li>
+        ))}
+      </ul> */}
     </div>
   );
 };
