@@ -156,7 +156,7 @@ const Recommendation: React.FC = () =>
       </button>
       <br />
       <div>
-        <label htmlFor="content">ItemId </label>
+        <label htmlFor="content">ItemID </label>
         <input
           id="content"
           type="text"
@@ -172,23 +172,23 @@ const Recommendation: React.FC = () =>
         >
           Get Recommendations
         </button>
-
-        <p>Collaborative Filtering</p>
-        <ul>
+          <br /><br />
+        <strong><p>Collaborative Filtering</p></strong>
+        <ul style={{ textAlign: 'left' }}>
           {recommendations.collaborative.map((id, index) => (
             <li key={index}>{id}</li>
           ))}
         </ul>
-
-        <p>Content Filtering</p>
-        <ul>
+          <br />
+        <strong><p>Content Filtering</p></strong>
+        <ul style={{ textAlign: 'left' }}>
           {content.collaborative.map((id, index) => (
             <li key={index}>{id}</li>
           ))}
         </ul>
-
-        <p>Azure ML</p>
-        <ul>
+          <br />
+        <strong><p>Azure ML</p></strong>
+        <ul style={{ textAlign: 'left' }}>
           {recommendations.azure.map((id, index) => (
             <li key={index}>{id}</li>
           ))}

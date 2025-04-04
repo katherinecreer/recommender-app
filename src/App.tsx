@@ -10,6 +10,7 @@ const App: React.FC = () => {
       <br />
       <br />
       <div>
+      <p>Please select either UserID or ItemID for relevant suggestions:</p>
       <Recommendation />
     </div>
     </>
