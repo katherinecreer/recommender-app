@@ -1,67 +1,141 @@
+
+// Handle necessary imports
 import { useState } from "react";
+
 
 interface Recommendations {
   collaborative: string[];
-  //content: string[];
-  //azure: string[];
+  azure: string[];
 }
 
-const Recommendation: React.FC = () => {
+// Define necessary variables for Azure
+const AZURE_ENDPOINT = "http://6a61ea1b-8cc2-470d-8835-627574e50f70.eastus2.azurecontainer.io/score";
+const AZURE_KEY = "PSBnwkCBD9z9hc1DF8BWAXqItMcPzmat";
+
+const Recommendation: React.FC = () => 
+{
   const [selectedID, setSelectedID] = useState<string>("");
   const [recommendations, setRecommendations] = useState<Recommendations>({
     collaborative: [],
-    //content: [],
-    //azure: [],
+    azure: [],
   });
-  const [content, setContent] = useState<Recommendations>({
+
+  // Keep the content-based recommendations separate
+  interface ContentRecs {
+    collaborative: string[];
+  }
+  const [content, setContent] = useState<ContentRecs>({
     collaborative: [],
-    //content: [],
-    //azure: [],
   });
+
   const [itemId, setItemId] = useState<string>("");
 
-  const fetchRecommendations = async () => {
-    try {
+  // Function to fetch user-based (collaborative) and Azure simultaneously
+  const fetchRecommendations = async () => 
+  {
+    try 
+    {
       const response = await fetch(
         `http://172.200.211.84:5000/recommend?user_id=${selectedID}`
       );
-      const jsonData = await response.json(); // Parse the JSON response once
+      const jsonData = await response.json();
 
-      if (jsonData.recommendations) {
+      if (jsonData.recommendations) 
+      {
         setRecommendations({
           collaborative: Array.isArray(jsonData.recommendations)
             ? jsonData.recommendations
             : [],
-          //content: contentData,
-          //azure: azureData,
+          azure: [],
         });
       }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error("Error fetching recommendations:", error);
     }
+
+    //
+    if (!selectedID.trim())
+    {
+      return;
+    }
+
+    console.log('Azure recommendations currently loading...');
+    
+    try
+    {
+      // Build the requestBody using the selectedID
+      const requestBody = { user_id: selectedID };
+
+      // Make the POST request to the Azure endpoint
+      const response = await fetch(AZURE_ENDPOINT,
+      {
+          method: "POST",
+          headers:
+          {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${AZURE_KEY}`
+          },
+          body: JSON.stringify(requestBody)
+      });
+
+      // If the response.ok returns false...
+      if (!response.ok)
+      {
+          // Throw an error if not connected
+          throw new Error(`Azure endpoint error: ${response.statusText}`);
+      }
+
+      // Define the data variable as the JSON response
+      const data = await response.json();
+      // Output the data in the console log
+      console.log("Azure response data:", data);
+
+      // Set the data as the azure recommendations variable, or blank (fallback)
+      setRecommendations((prev) =>
+        ({
+          ...prev,
+          azure: data.recommendations || []
+      }));
+    }
+
+    // If an error was found
+    catch (err: any)
+    {
+      // Report an error
+      console.error("Error calling Azure endpoint:", err);
+    } 
+
   };
 
-  const fetchContent = async () => {
-    try {
+  // Function to fetch content-based recommendations
+  const fetchContent = async () => 
+  {
+    try 
+    {
       const response = await fetch(
         `http://172.200.211.84:5000/get_recommendations?title=${itemId}`
       );
-      const jsonData = await response.json(); // Parse the JSON response once
+      const jsonData = await response.json();
       console.log(jsonData.recommendations);
-      if (jsonData.recommendations) {
+      if (jsonData.recommendations) 
+      {
         setContent({
           collaborative: Array.isArray(jsonData.recommendations)
             ? jsonData.recommendations
             : [],
-          //content: contentData,
-          //azure: azureData,
         });
       }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error("Error fetching recommendations:", error);
     }
   };
 
+
+  // Return the data in an HTML format
   return (
     <div>
       <label htmlFor="UserId">UserID </label>
@@ -98,6 +172,7 @@ const Recommendation: React.FC = () => {
         >
           Get Recommendations
         </button>
+
         <p>Collaborative Filtering</p>
         <ul>
           {recommendations.collaborative.map((id, index) => (
@@ -111,16 +186,17 @@ const Recommendation: React.FC = () => {
             <li key={index}>{id}</li>
           ))}
         </ul>
-        {/*}
+
         <p>Azure ML</p>
         <ul>
           {recommendations.azure.map((id, index) => (
             <li key={index}>{id}</li>
           ))}
-        </ul> */}
+        </ul>
       </div>
     </div>
   );
 };
 
+// export the recommendation
 export default Recommendation;
